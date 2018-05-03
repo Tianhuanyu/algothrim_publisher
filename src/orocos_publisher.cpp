@@ -39,6 +39,7 @@
  */
 int main(int argc, char **argv)
 {
+  const int jtNr = 6;
   /**
    * The ros::init() function needs to see argc and argv so that it can perform
    * any ROS arguments and name remapping that were provided at the command line.
@@ -59,7 +60,12 @@ int main(int argc, char **argv)
    * NodeHandle destructed will close down the node.
    */
 // %Tag(NODEHANDLE)%
-  ros::NodeHandle n;
+  ros::NodeHandle n1;
+  ros::NodeHandle n2;
+  ros::NodeHandle n3;
+  ros::NodeHandle n4;
+  ros::NodeHandle n5;
+  ros::NodeHandle n6;
 // %EndTag(NODEHANDLE)%
 
   /**
@@ -80,7 +86,15 @@ int main(int argc, char **argv)
    * buffer up before throwing some away.
    */
 // %Tag(PUBLISHER)%
-  ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter123456", 1000);
+  std::vector<ros::Publisher> chatter_pub;
+  chatter_pub.push_back(n1.advertise<std_msgs::String>("chatter1", 1000));
+  chatter_pub.push_back(n2.advertise<std_msgs::String>("chatter2", 1000));
+  chatter_pub.push_back(n3.advertise<std_msgs::String>("chatter3", 1000));
+  chatter_pub.push_back(n4.advertise<std_msgs::String>("chatter4", 1000));
+  chatter_pub.push_back(n5.advertise<std_msgs::String>("chatter5", 1000));
+  chatter_pub.push_back(n6.advertise<std_msgs::String>("chatter6", 1000));
+
+
 // %EndTag(PUBLISHER)%
 
 // %Tag(LOOP_RATE)%
@@ -93,6 +107,7 @@ int main(int argc, char **argv)
    */
 // %Tag(ROS_OK)%
   int count = 0;
+  int i = 0;
   while (ros::ok())
   {
 // %EndTag(ROS_OK)%
@@ -118,7 +133,9 @@ int main(int argc, char **argv)
      * in the constructor above.
      */
 // %Tag(PUBLISH)%
-    chatter_pub.publish(msg);
+for(i=0;i<jtNr;i++){
+      chatter_pub[i].publish(msg);
+    }
 // %EndTag(PUBLISH)%
 
 // %Tag(SPINONCE)%
