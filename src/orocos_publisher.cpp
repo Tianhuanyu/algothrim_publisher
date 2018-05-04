@@ -40,10 +40,10 @@ void chatterCallback(const sensor_msgs::JointState::ConstPtr& msg)
   ROS_INFO("I heard position: [%f %f %f %f %f %f]", msg->position[0], msg->position[1], msg->position[2]
   , msg->position[3], msg->position[4], msg->position[5]);
 
-  ROS_INFO("I heard velocity: [%f %f %f %f %f %f]", msg->position[0], msg->position[1], msg->position[2]
-  , msg->position[3], msg->position[4], msg->position[5]);
-  ROS_INFO("I heard: [%f %f %f %f %f %f]", msg->position[0], msg->position[1], msg->position[2]
-  , msg->position[3], msg->position[4], msg->position[5]);
+  ROS_INFO("I heard velocity: [%f %f %f %f %f %f]", msg->velocity[0], msg->velocity[1], msg->velocity[2]
+  , msg->velocity[3], msg->velocity[4], msg->velocity[5]);
+  ROS_INFO("I heard effect: [%f %f %f %f %f %f]", msg->effort[0], msg->effort[1], msg->effort[2]
+  , msg->effort[3], msg->effort[4], msg->effort[5]);
 }
 
 /**

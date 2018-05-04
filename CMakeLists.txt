@@ -118,13 +118,14 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
  include
-  ${catkin_INCLUDE_DIRS}
+  ${catkin_INCLUDE_DIRS} src/${PROJECT_NAME}/orocos_kdl
 )
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
 #   src/${PROJECT_NAME}/orocos_publisher.cpp
 # )
+aux_source_directory(src/${PROJECT_NAME}/orocos_kdl PROJECT_NAME_OROCOS)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -149,7 +150,7 @@ include_directories(
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(${PROJECT_NAME}_node
-   ${catkin_LIBRARIES}
+   ${catkin_LIBRARIES} ${PROJECT_NAME_OROCOS}
  )
 
 #############
