@@ -30,9 +30,21 @@
 // %EndTag(ROS_HEADER)%
 // %Tag(MSG_HEADER)%
 #include "std_msgs/String.h"
+#include "sensor_msgs/JointState.h"
 // %EndTag(MSG_HEADER)%
 
 #include <sstream>
+
+void chatterCallback(const sensor_msgs::JointState::ConstPtr& msg)
+{
+  ROS_INFO("I heard position: [%f %f %f %f %f %f]", msg->position[0], msg->position[1], msg->position[2]
+  , msg->position[3], msg->position[4], msg->position[5]);
+
+  ROS_INFO("I heard velocity: [%f %f %f %f %f %f]", msg->position[0], msg->position[1], msg->position[2]
+  , msg->position[3], msg->position[4], msg->position[5]);
+  ROS_INFO("I heard: [%f %f %f %f %f %f]", msg->position[0], msg->position[1], msg->position[2]
+  , msg->position[3], msg->position[4], msg->position[5]);
+}
 
 /**
  * This tutorial demonstrates simple sending of messages over the ROS system.
@@ -52,6 +64,7 @@ int main(int argc, char **argv)
    */
 // %Tag(INIT)%
   ros::init(argc, argv, "talker");
+  ros::init(argc, argv, "listener");
 // %EndTag(INIT)%
 
   /**
@@ -66,6 +79,8 @@ int main(int argc, char **argv)
   ros::NodeHandle n4;
   ros::NodeHandle n5;
   ros::NodeHandle n6;
+
+  ros::NodeHandle n;
 // %EndTag(NODEHANDLE)%
 
   /**
@@ -94,6 +109,8 @@ int main(int argc, char **argv)
   chatter_pub.push_back(n5.advertise<std_msgs::String>("chatter5", 1000));
   chatter_pub.push_back(n6.advertise<std_msgs::String>("chatter6", 1000));
 
+  ros::Subscriber sub = n.subscribe("joint_states", 1, chatterCallback);
+
 
 // %EndTag(PUBLISHER)%
 
@@ -118,12 +135,12 @@ int main(int argc, char **argv)
     std_msgs::String msg;
 
     std::stringstream ss;
-    ss << "hello world " << count;
+    ss << "hello world " << count<<" "<<chatter_pub.size();
     msg.data = ss.str();
 // %EndTag(FILL_MESSAGE)%
 
 // %Tag(ROSCONSOLE)%
-    ROS_INFO("%s", msg.data.c_str());
+    //ROS_INFO("%s", msg.data.c_str());
 // %EndTag(ROSCONSOLE)%
 
     /**
