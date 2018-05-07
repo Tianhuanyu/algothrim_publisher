@@ -31,19 +31,55 @@
 // %Tag(MSG_HEADER)%
 #include "std_msgs/String.h"
 #include "sensor_msgs/JointState.h"
+#include "geometry_msgs/Pose.h"
+#include "orocos_publisher.hpp"
 // %EndTag(MSG_HEADER)%
 
 #include <sstream>
 
-void chatterCallback(const sensor_msgs::JointState::ConstPtr& msg)
-{
-  ROS_INFO("I heard position: [%f %f %f %f %f %f]", msg->position[0], msg->position[1], msg->position[2]
-  , msg->position[3], msg->position[4], msg->position[5]);
+static int i = 0;
+static RGM_ROBOT ur_ctrl;
 
-  ROS_INFO("I heard velocity: [%f %f %f %f %f %f]", msg->velocity[0], msg->velocity[1], msg->velocity[2]
-  , msg->velocity[3], msg->velocity[4], msg->velocity[5]);
-  ROS_INFO("I heard effect: [%f %f %f %f %f %f]", msg->effort[0], msg->effort[1], msg->effort[2]
-  , msg->effort[3], msg->effort[4], msg->effort[5]);
+void joint_chatterCallback(const sensor_msgs::JointState::ConstPtr& msg)
+{
+  // ROS_INFO("I heard position: [%f %f %f %f %f %f]", msg->position[0], msg->position[1], msg->position[2]
+  // , msg->position[3], msg->position[4], msg->position[5]);
+
+  // ROS_INFO("I heard velocity: [%f %f %f %f %f %f]", msg->velocity[0], msg->velocity[1], msg->velocity[2]
+  // , msg->velocity[3], msg->velocity[4], msg->velocity[5]);
+  // ROS_INFO("I heard effect: [%f %f %f %f %f %f]", msg->effort[0], msg->effort[1], msg->effort[2]
+  // , msg->effort[3], msg->effort[4], msg->effort[5]);
+
+  for(i=0;i<6;i++){
+    ur_ctrl.actual_position[i]  = msg->position[i];
+    ur_ctrl.actual_velocity[i]  = msg->velocity[i];
+    ur_ctrl.actual_torque[i]  = msg->effort[i];
+   }
+
+
+}
+
+
+void command_chatterCallback(const geometry_msgs::Pose::ConstPtr& msg)
+{
+  // ROS_INFO("I heard position: [%f %f %f %f %f %f]", msg->position[0], msg->position[1], msg->position[2]
+  // , msg->position[3], msg->position[4], msg->position[5]);
+
+  // ROS_INFO("I heard velocity: [%f %f %f %f %f %f]", msg->velocity[0], msg->velocity[1], msg->velocity[2]
+  // , msg->velocity[3], msg->velocity[4], msg->velocity[5]);
+  // ROS_INFO("I heard effect: [%f %f %f %f %f %f]", msg->effort[0], msg->effort[1], msg->effort[2]
+  // , msg->effort[3], msg->effort[4], msg->effort[5]);
+
+  
+    ur_ctrl.target_tcp_frame.point[0]  = msg->position.x;
+    ur_ctrl.target_tcp_frame.point[1]  = msg->position.y;
+    ur_ctrl.target_tcp_frame.point[2]  = msg->position.z;
+
+    ur_ctrl.target_tcp_frame.orientation[0] = msg->orientation.x;
+    ur_ctrl.target_tcp_frame.orientation[1] = msg->orientation.y;
+    ur_ctrl.target_tcp_frame.orientation[2] = msg->orientation.z;
+    ur_ctrl.target_tcp_frame.orientation[3] = msg->orientation.w;
+
 }
 
 /**
@@ -109,7 +145,8 @@ int main(int argc, char **argv)
   chatter_pub.push_back(n5.advertise<std_msgs::String>("chatter5", 1000));
   chatter_pub.push_back(n6.advertise<std_msgs::String>("chatter6", 1000));
 
-  ros::Subscriber sub = n.subscribe("joint_states", 1, chatterCallback);
+  ros::Subscriber sub_jnt = n.subscribe("joint_states", 1, joint_chatterCallback);
+  ros::Subscriber sub_tcp = n.subscribe("pc_command", 1, command_chatterCallback);
 
 
 // %EndTag(PUBLISHER)%
@@ -124,7 +161,7 @@ int main(int argc, char **argv)
    */
 // %Tag(ROS_OK)%
   int count = 0;
-  int i = 0;
+
   while (ros::ok())
   {
 // %EndTag(ROS_OK)%
